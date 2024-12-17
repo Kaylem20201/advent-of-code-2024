@@ -76,9 +76,13 @@ impl Config {
 
 pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
     let day = config.day;
-    println!("Solving for day {day}...");
+    println!("Getting input for day {day}...");
     let raw_input: String = get_input(config)?;
     println!("Input ready.");
+
+    println!("Solving...");
+    let res = solvers::solve(day, raw_input);
+    println!("{:?}", res);
 
     Ok(())
 }

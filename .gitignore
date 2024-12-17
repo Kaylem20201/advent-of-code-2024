@@ -1,4 +1,4 @@
 /target
-/day*
+/inputs
 
 **.env*

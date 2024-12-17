@@ -5,6 +5,41 @@ use std::path::Path;
 
 use reqwest::header;
 
+mod solvers {
+    mod day_1;
+    // mod day_2;
+    // mod day_3;
+    // mod day_4;
+    // mod day_5;
+    // mod day_6;
+    // mod day_7;
+    // mod day_8;
+    // mod day_9;
+    // mod day_10;
+    // mod day_11;
+    // mod day_12;
+    // mod day_13;
+    // mod day_14;
+    // mod day_15;
+    // mod day_16;
+    // mod day_17;
+    // mod day_18;
+    // mod day_19;
+    // mod day_20;
+    // mod day_21;
+    // mod day_22;
+    // mod day_23;
+    // mod day_24;
+    // mod day_25;
+
+    pub fn solve(day: u8, input: String) -> String {
+        return match day {
+            1 => day_1::solve(input),
+            _ => panic!("Solution not implemented for day {}", day),
+        };
+    }
+}
+
 pub struct Config {
     day: u8,
     client: reqwest::blocking::Client,
@@ -27,7 +62,7 @@ impl Config {
         let mut cookie = header::HeaderValue::from_str(&format!("session={}", token)).unwrap();
         cookie.set_sensitive(true);
         headers.insert(header::COOKIE, cookie);
-        println!("Headers: {:?}", headers);
+        // println!("Headers: {:?}", headers);
         let client = match reqwest::blocking::Client::builder()
             .default_headers(headers)
             .build() {
@@ -50,7 +85,7 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
 
 fn get_input(config: Config) -> Result<String, Box<dyn Error>> {
     let mut filestring = env::var("AOC_DIR")?;
-    filestring.push_str(&format!("day_{}/input.txt", config.day));
+    filestring.push_str(&format!("inputs/day_{}.txt", config.day));
     let filepath = Path::new(&filestring);
     let input = fs::read_to_string(&filepath).unwrap_or_else(|_| {
         println!("Existing input not found.");

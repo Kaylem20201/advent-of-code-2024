@@ -32,7 +32,7 @@ mod solvers {
     // mod day_24;
     // mod day_25;
 
-    pub fn solve(day: u8, input: String) -> String {
+    pub fn solve(day: u8, input: String) -> (String, String) {
         return match day {
             1 => day_1::solve(input),
             _ => panic!("Solution not implemented for day {}", day),
@@ -81,8 +81,9 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
     println!("Input ready.");
 
     println!("Solving...");
-    let res = solvers::solve(day, raw_input);
-    println!("{:?}", res);
+    let (part1_answer, part2_answer) = solvers::solve(day, raw_input);
+    println!("Part 1 Answer: {:?}", part1_answer);
+    println!("Part 2 Answer: {:?}", part2_answer);
 
     Ok(())
 }

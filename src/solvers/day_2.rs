@@ -23,7 +23,10 @@ fn part_1(input: &ParsedInput) -> String {
 }
 
 fn part_2(input: &ParsedInput) -> String {
-    return String::from("Not implemented");
+    input.lines.iter().fold(0, |sum, line| {
+        if is_safe_with_fault(line) { return sum + 1; }
+        return sum;
+    }).to_string()
 }
 
 fn parse_input(input: &str) -> ParsedInput {
@@ -49,4 +52,27 @@ fn is_safe(line: &str) -> bool {
         if diff < 1 || diff > 3 {return false;}
     }
     return true;
+}
+
+fn is_safe_with_fault(line: &str) -> bool {
+    if is_safe(line) {
+        return true;
+    }
+    println!("Line might be unsafe: {:?}", line);
+    let nums: Vec<u32> = line.split_whitespace().map(|num_str| {
+        return num_str.parse::<u32>().unwrap();
+    }).collect();
+    for i in 0..nums.len() {
+        let mut copy = nums.clone();
+        let removed_num = copy.remove(i);
+        let test_line = copy.iter().map(|num| {num.to_string()})
+            .collect::<Vec<String>>()
+            .join(" ");
+        if is_safe(&test_line) { 
+            println!("Found safe removal. Removed: {:?} from {:?}", removed_num, line);
+            return true; 
+        }
+    }
+    println!("Could not find a safe removal from {:?}", line);
+    return false;
 }

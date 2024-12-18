@@ -44,6 +44,7 @@ mod solvers {
 pub struct Config {
     day: u8,
     client: reqwest::blocking::Client,
+    use_example: bool,
 }
 
 impl Config {
@@ -53,8 +54,11 @@ impl Config {
             Err(_e) => return Err("provide day number as first argument"),
         };
         let client = Config::build_client()?;
+        let use_example = 
+            args.contains(&String::from("-e")) || 
+            args.contains(&String::from("--example"));
 
-        Ok(Config { day, client })
+        Ok(Config { day, client, use_example })
     }
 
     fn build_client() -> Result<reqwest::blocking::Client, &'static str> {
@@ -91,7 +95,11 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
 
 fn get_input(config: Config) -> Result<String, Box<dyn Error>> {
     let mut filestring = env::var("AOC_DIR")?;
-    filestring.push_str(&format!("inputs/day_{}.txt", config.day));
+    let base_path = match config.use_example {
+        true => "examples",
+        false => "inputs"
+    };
+    filestring.push_str(&format!("{base_path}/day_{}.txt", config.day));
     let filepath = Path::new(&filestring);
     let input = fs::read_to_string(&filepath).unwrap_or_else(|_| {
         println!("Existing input not found.");

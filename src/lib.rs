@@ -8,7 +8,7 @@ use reqwest::header;
 mod solvers {
     mod day_1;
     mod day_2;
-    // mod day_3;
+    mod day_3;
     // mod day_4;
     // mod day_5;
     // mod day_6;
@@ -36,6 +36,7 @@ mod solvers {
         return match day {
             1 => day_1::solve(input),
             2 => day_2::solve(input),
+            3 => day_3::solve(input),
             _ => panic!("Solution not implemented for day {}", day),
         };
     }

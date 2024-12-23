@@ -9,7 +9,7 @@ mod solvers {
     mod day_1;
     mod day_2;
     mod day_3;
-    // mod day_4;
+    mod day_4;
     // mod day_5;
     // mod day_6;
     // mod day_7;
@@ -37,6 +37,7 @@ mod solvers {
             1 => day_1::solve(input),
             2 => day_2::solve(input),
             3 => day_3::solve(input),
+            4 => day_4::solve(input),
             _ => panic!("Solution not implemented for day {}", day),
         };
     }

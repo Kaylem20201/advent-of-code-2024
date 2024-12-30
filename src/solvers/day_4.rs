@@ -1,78 +1,11 @@
 use core::panic;
-use std::usize;
+
+use crate::solvers::tools::grid;
+use grid::Grid;
+use grid::Vector;
 
 struct ParsedInput {
     grid: Grid<char>,
-}
-
-struct Grid<T> {
-    elements: Vec<T>,
-    height: usize,
-    length: usize,
-}
-
-#[derive(Debug)]
-struct Vector {
-    x: isize,
-    y: isize,
-}
-
-impl<T> Grid<T> {
-    fn get(&self, coord: &Vector) -> &T {
-        if coord.x < 0 {
-            panic!("X value must be 0 or positive! Given x: {:?}", coord.x);
-        }
-        if coord.y < 0 {
-            panic!("Y value must be 0 or positive! Given y: {:?}", coord.y);
-        }
-        let y = coord.y as usize * self.length;
-        let x = coord.x as usize;
-        let index: usize = x + y;
-        return &self.elements[index];
-    }
-
-    fn index_to_coord(&self, index: usize) -> Vector {
-        let y = index / self.length;
-        let x = index - (y * self.length);
-        return Vector {
-            x: x.try_into().unwrap(),
-            y: y.try_into().unwrap(),
-        };
-    }
-}
-
-impl Vector {
-    pub const NW: Vector = Vector { x: -1, y: -1 };
-    pub const N: Vector = Vector { x: 0, y: -1 };
-    pub const NE: Vector = Vector { x: 1, y: -1 };
-    pub const E: Vector = Vector { x: 1, y: 0 };
-    pub const SE: Vector = Vector { x: 1, y: 1 };
-    pub const S: Vector = Vector { x: 0, y: 1 };
-    pub const SW: Vector = Vector { x: -1, y: 1 };
-    pub const W: Vector = Vector { x: -1, y: 0 };
-
-    fn add(&self, _rhs: &Vector) -> Vector {
-        // println!("Adding.");
-        // println!("lhs: {:?}", &self);
-        // println!("rhs: {:?}", _rhs);
-        Vector {
-            x: self.x + _rhs.x,
-            y: self.y + _rhs.y,
-        }
-    }
-
-    pub fn get_directions() -> Vec<Vector> {
-        vec![
-            Vector::NW,
-            Vector::N,
-            Vector::NE,
-            Vector::E,
-            Vector::SE,
-            Vector::S,
-            Vector::SW,
-            Vector::W,
-        ]
-    }
 }
 
 pub fn solve(input: String) -> (String, String) {
@@ -142,15 +75,16 @@ fn part_2(input: &ParsedInput) -> String {
                 (middle_coord.add(&Vector::SE), Vector::NW),
                 (middle_coord.add(&Vector::SW), Vector::NE),
             ];
-            let res = coords_and_dirs
-                .iter()
-                .fold(0, |inner_sum, coord_and_dir| {
+            let res =
+                coords_and_dirs.iter().fold(0, |inner_sum, coord_and_dir| {
                     match check_pattern(&grid, &pattern_chars, &coord_and_dir.0, &coord_and_dir.1) {
                         true => inner_sum + 1,
                         false => inner_sum,
                     }
                 });
-            if res > 2 { panic!("This is impossible!"); }
+            if res > 2 {
+                panic!("This is impossible!");
+            }
             if res == 2 {
                 println!("X-MAS found at {:?}", middle_coord);
                 return sum + 1;

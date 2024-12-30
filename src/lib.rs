@@ -6,6 +6,10 @@ use std::path::Path;
 use reqwest::header;
 
 mod solvers {
+    mod tools {
+        pub mod grid;
+    }
+
     mod day_1;
     mod day_2;
     mod day_3;

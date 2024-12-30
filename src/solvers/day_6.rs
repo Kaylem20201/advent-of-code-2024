@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 use std::collections::HashSet;
 
 use crate::solvers::tools::grid;
@@ -8,6 +9,7 @@ struct ParsedInput {
     grid: Grid<char>,
 }
 
+#[derive(PartialEq, Eq, Hash, Clone, Debug)]
 struct State {
     position: Vector,
     direction: Vector,
@@ -29,7 +31,7 @@ fn rotate_right(direction: &Vector) -> Vector {
 }
 
 impl Iterator for PathIterator<'_, char> {
-    type Item = Vector;
+    type Item = State;
 
     fn next(&mut self) -> Option<Self::Item> {
         let mut direction = self.curr.direction.clone();
@@ -46,13 +48,13 @@ impl Iterator for PathIterator<'_, char> {
             if *char != '#' {
                 self.curr.position = possible_next.clone();
                 self.curr.direction = direction;
-                return Some(self.curr.position.clone());
+                return Some(self.curr.clone());
             }
-            println!("Turning at: {:?}", self.curr.position);
-            println!("Previous direction: {:?}", direction);
+            // println!("Turning at: {:?}", self.curr.position);
+            // println!("Previous direction: {:?}", direction);
             direction = rotate_right(&direction);
-            println!("Turned. Position now: {:?}", self.curr.position);
-            println!("Direction now: {:?}", direction);
+            // println!("Turned. Position now: {:?}", self.curr.position);
+            // println!("Direction now: {:?}", direction);
         }
     }
 }
@@ -79,13 +81,39 @@ fn part_1(input: &ParsedInput) -> String {
     visited.insert(start.position.clone());
     let path = PathIterator { curr: start, grid: &input.grid };
     for coord in path {
-        visited.insert(coord);
+        visited.insert(coord.position);
     }
     return visited.len().to_string();
 }
 
 fn part_2(input: &ParsedInput) -> String {
-    return String::from("Not implemented yet.");
+    let start = find_start(&input.grid);
+    let mut visited : HashSet<State> = HashSet::new();
+    visited.insert(start.clone());
+    let path = PathIterator { curr: start.clone(), grid: &input.grid };
+    for coord in path {
+        visited.insert(coord);
+    }
+    let mut new_obstacles = HashSet::new();
+    for next_state in visited.into_iter() {
+        if next_state.position == start.position { continue; }
+        let mut grid_copy = input.grid.clone();
+        grid_copy.replace_at(&next_state.position, '#');
+        let test_path = PathIterator { curr: start.clone(), grid: &grid_copy };
+        let mut test_visited: HashSet<State> = HashSet::new();
+        test_visited.insert(start.clone());
+        for coord in test_path {
+            // println!("test_visited: {:?}", test_visited);
+            // println!("Current: {:?}", coord);
+            if test_visited.contains(&coord) { 
+                println!("Loop detected. Obstacle: {:?}", next_state.position);
+                new_obstacles.insert(next_state.position.clone());
+                break;
+            }
+            test_visited.insert(coord);
+        }
+    }
+    new_obstacles.len().to_string()
 }
 
 fn parse_input(input: &str) -> ParsedInput {

@@ -1,5 +1,6 @@
 use std::usize;
 
+#[derive(Clone)]
 pub struct Grid<T> {
     pub elements: Vec<T>,
     pub height: usize,
@@ -14,6 +15,23 @@ pub struct Vector {
 
 impl<T> Grid<T> {
     pub fn get(&self, coord: &Vector) -> Option<&T> {
+        if let Some(index) = self.coord_to_index(coord) {
+            return Some(&self.elements[index]);
+        }
+
+        None
+    }
+
+    pub fn replace_at(&mut self, coord: &Vector, value: T) -> Option<&T> {
+        if let Some(index) = self.coord_to_index(coord) {
+            self.elements[index] = value;
+            return self.get(coord);
+        }
+
+        None
+    }
+
+    pub fn coord_to_index(&self, coord: &Vector) -> Option<usize> {
         if coord.x < 0 || coord.x as usize >= self.length {
             return None;
         }
@@ -22,8 +40,7 @@ impl<T> Grid<T> {
         }
         let y = coord.y as usize * self.length;
         let x = coord.x as usize;
-        let index: usize = x + y;
-        return Some(&self.elements[index]);
+        Some(x + y)
     }
 
     pub fn index_to_coord(&self, index: usize) -> Vector {

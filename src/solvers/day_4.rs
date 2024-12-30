@@ -139,7 +139,7 @@ fn check_pattern(
         {
             return false;
         }
-        let grid_char = grid.get(&current_coord);
+        let grid_char = grid.get(&current_coord).unwrap();
         if grid_char != check_char {
             // println!("{:?} did not match {:?}", grid_char, check_char);
             return false;

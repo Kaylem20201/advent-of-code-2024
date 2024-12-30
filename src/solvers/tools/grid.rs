@@ -6,24 +6,24 @@ pub struct Grid<T> {
     pub length: usize,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Eq, Hash, Clone)]
 pub struct Vector {
     pub x: isize,
     pub y: isize,
 }
 
 impl<T> Grid<T> {
-    pub fn get(&self, coord: &Vector) -> &T {
-        if coord.x < 0 {
-            panic!("X value must be 0 or positive! Given x: {:?}", coord.x);
+    pub fn get(&self, coord: &Vector) -> Option<&T> {
+        if coord.x < 0 || coord.x as usize >= self.length {
+            return None;
         }
-        if coord.y < 0 {
-            panic!("Y value must be 0 or positive! Given y: {:?}", coord.y);
+        if coord.y < 0 || coord.y as usize >= self.height {
+            return None;
         }
         let y = coord.y as usize * self.length;
         let x = coord.x as usize;
         let index: usize = x + y;
-        return &self.elements[index];
+        return Some(&self.elements[index]);
     }
 
     pub fn index_to_coord(&self, index: usize) -> Vector {

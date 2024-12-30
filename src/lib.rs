@@ -1,6 +1,6 @@
+use std::env;
 use std::error::Error;
 use std::fs;
-use std::env;
 use std::path::Path;
 
 use reqwest::header;
@@ -16,7 +16,7 @@ mod solvers {
     mod day_4;
     mod day_5;
     mod day_6;
-    // mod day_7;
+    mod day_7;
     // mod day_8;
     // mod day_9;
     // mod day_10;
@@ -44,6 +44,7 @@ mod solvers {
             4 => day_4::solve(input),
             5 => day_5::solve(input),
             6 => day_6::solve(input),
+            7 => day_7::solve(input),
             _ => panic!("Solution not implemented for day {}", day),
         };
     }
@@ -62,11 +63,14 @@ impl Config {
             Err(_e) => return Err("provide day number as first argument"),
         };
         let client = Config::build_client()?;
-        let use_example = 
-            args.contains(&String::from("-e")) || 
-            args.contains(&String::from("--example"));
+        let use_example =
+            args.contains(&String::from("-e")) || args.contains(&String::from("--example"));
 
-        Ok(Config { day, client, use_example })
+        Ok(Config {
+            day,
+            client,
+            use_example,
+        })
     }
 
     fn build_client() -> Result<reqwest::blocking::Client, &'static str> {
@@ -78,11 +82,12 @@ impl Config {
         // println!("Headers: {:?}", headers);
         let client = match reqwest::blocking::Client::builder()
             .default_headers(headers)
-            .build() {
+            .build()
+        {
             Ok(client) => client,
             Err(_e) => return Err("session cookie invalid."),
         };
-        
+
         return Ok(client);
     }
 }
@@ -105,7 +110,7 @@ fn get_input(config: Config) -> Result<String, Box<dyn Error>> {
     let mut filestring = env::var("AOC_DIR")?;
     let base_path = match config.use_example {
         true => "examples",
-        false => "inputs"
+        false => "inputs",
     };
     filestring.push_str(&format!("{base_path}/day_{}.txt", config.day));
     let filepath = Path::new(&filestring);

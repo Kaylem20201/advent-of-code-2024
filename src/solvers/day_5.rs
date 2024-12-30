@@ -1,8 +1,34 @@
-use std::collections::HashMap;
+use std::{cmp::Ordering, collections::HashMap};
 
 struct ParsedInput {
     rules: HashMap<u32, Vec<u32>>,
     patterns: Vec<Vec<u32>>,
+}
+
+struct Ruleset<'a> {
+    rules: &'a HashMap<u32, Vec<u32>>,
+}
+
+impl Ruleset<'_> {
+    pub fn rule_cmp(&self, a: &u32, b: &u32) -> bool {
+        if let Some(rule_vec) = &self.rules.get(a) {
+            if rule_vec.contains(b) {
+                //a must be before b
+                return true;
+            }
+        }
+        return false;
+    }
+
+    pub fn ord_cmp(&self, a: &u32, b: &u32) -> Ordering {
+        if let Some(rule_vec) = &self.rules.get(a) {
+            if rule_vec.contains(b) {
+                //a must be before b
+                return Ordering::Less;
+            }
+        }
+        return Ordering::Greater;
+    }
 }
 
 pub fn solve(input: String) -> (String, String) {
@@ -43,7 +69,31 @@ fn part_1(input: &ParsedInput) -> String {
 }
 
 fn part_2(input: &ParsedInput) -> String {
-    return String::from("Not yet implemented.");
+    let ruleset = Ruleset{ rules: &input.rules };
+    let (_good, mut bad) = split_valid_patterns(&input.patterns, &ruleset);
+    bad.iter_mut().fold(0, |res, pattern| {
+        pattern.sort_unstable_by(|a, b| ruleset.ord_cmp(a, b));
+        let middle_num = pattern.get(pattern.len()/2).unwrap();
+        return res+middle_num;
+    }).to_string()
+}
+
+fn split_valid_patterns(patterns: &Vec<Vec<u32>>, ruleset: &Ruleset) -> (Vec<Vec<u32>>, Vec<Vec<u32>>) {
+    let mut good: Vec<Vec<u32>> = Vec::new();
+    let mut bad: Vec<Vec<u32>> = Vec::new();
+
+    for pattern in patterns {
+        match check_pattern(pattern, ruleset) {
+            true => good.push(pattern.clone()),
+            false => bad.push(pattern.clone())
+        }
+    }
+
+    return (good, bad);
+}
+
+fn check_pattern(pattern: &Vec<u32>, ruleset: &Ruleset) -> bool {
+    return pattern.is_sorted_by(|a, b| ruleset.rule_cmp(a, b));
 }
 
 fn parse_input(input: &str) -> ParsedInput {

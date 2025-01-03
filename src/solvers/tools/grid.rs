@@ -1,6 +1,7 @@
+use std::io;
 use std::usize;
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Grid<T> {
     pub elements: Vec<T>,
     pub height: usize,
@@ -50,6 +51,17 @@ impl<T> Grid<T> {
             x: x.try_into().unwrap(),
             y: y.try_into().unwrap(),
         };
+    }
+}
+
+impl Grid<char> {
+    pub fn print(&self) {
+        for i in 0..self.height {
+            let start_index = i * self.length;
+            let end_index = start_index + self.length;
+            let line = String::from_iter(self.elements[start_index..end_index].into_iter());
+            println!("{}", line);
+        }
     }
 }
 

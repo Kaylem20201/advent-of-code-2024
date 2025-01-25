@@ -1,4 +1,4 @@
-use std::io;
+use std::ops::{Add, Sub};
 use std::usize;
 
 #[derive(Clone, Debug)]
@@ -9,13 +9,13 @@ pub struct Grid<T> {
 }
 
 #[derive(Debug, PartialEq, Eq, Hash, Clone)]
-pub struct Vector {
+pub struct Point {
     pub x: isize,
     pub y: isize,
 }
 
 impl<T> Grid<T> {
-    pub fn get(&self, coord: &Vector) -> Option<&T> {
+    pub fn get(&self, coord: &Point) -> Option<&T> {
         if let Some(index) = self.coord_to_index(coord) {
             return Some(&self.elements[index]);
         }
@@ -23,7 +23,7 @@ impl<T> Grid<T> {
         None
     }
 
-    pub fn replace_at(&mut self, coord: &Vector, value: T) -> Option<&T> {
+    pub fn replace_at(&mut self, coord: &Point, value: T) -> Option<&T> {
         if let Some(index) = self.coord_to_index(coord) {
             self.elements[index] = value;
             return self.get(coord);
@@ -32,22 +32,27 @@ impl<T> Grid<T> {
         None
     }
 
-    pub fn coord_to_index(&self, coord: &Vector) -> Option<usize> {
-        if coord.x < 0 || coord.x as usize >= self.length {
-            return None;
-        }
-        if coord.y < 0 || coord.y as usize >= self.height {
-            return None;
-        }
+    pub fn is_in_bounds(&self, coord: &Point) -> bool {
+        coord.x >= 0
+            && coord.y >= 0
+            && coord.x < self.length.try_into().unwrap()
+            && coord.y < self.height.try_into().unwrap()
+    }
+
+    pub fn coord_to_index(&self, coord: &Point) -> Option<usize> {
+        if !self.is_in_bounds(coord) { return None; }
+
         let y = coord.y as usize * self.length;
         let x = coord.x as usize;
+
         Some(x + y)
     }
 
-    pub fn index_to_coord(&self, index: usize) -> Vector {
+    pub fn index_to_coord(&self, index: usize) -> Point {
+        if index >= self.elements.len() { panic!("Out of grid bounds"); }
         let y = index / self.length;
         let x = index - (y * self.length);
-        return Vector {
+        return Point {
             x: x.try_into().unwrap(),
             y: y.try_into().unwrap(),
         };
@@ -65,36 +70,65 @@ impl Grid<char> {
     }
 }
 
-impl Vector {
-    pub const NW: Vector = Vector { x: -1, y: -1 };
-    pub const N: Vector = Vector { x: 0, y: -1 };
-    pub const NE: Vector = Vector { x: 1, y: -1 };
-    pub const E: Vector = Vector { x: 1, y: 0 };
-    pub const SE: Vector = Vector { x: 1, y: 1 };
-    pub const S: Vector = Vector { x: 0, y: 1 };
-    pub const SW: Vector = Vector { x: -1, y: 1 };
-    pub const W: Vector = Vector { x: -1, y: 0 };
+impl Point {
+    pub const NW: Point = Point { x: -1, y: -1 };
+    pub const N: Point = Point { x: 0, y: -1 };
+    pub const NE: Point = Point { x: 1, y: -1 };
+    pub const E: Point = Point { x: 1, y: 0 };
+    pub const SE: Point = Point { x: 1, y: 1 };
+    pub const S: Point = Point { x: 0, y: 1 };
+    pub const SW: Point = Point { x: -1, y: 1 };
+    pub const W: Point = Point { x: -1, y: 0 };
 
-    pub fn add(&self, _rhs: &Vector) -> Vector {
+    pub fn add(&self, _rhs: &Point) -> Point {
         // println!("Adding.");
         // println!("lhs: {:?}", &self);
         // println!("rhs: {:?}", _rhs);
-        Vector {
+        Point {
             x: self.x + _rhs.x,
             y: self.y + _rhs.y,
         }
     }
 
-    pub fn get_directions() -> Vec<Vector> {
+    pub fn sub(&self, _rhs: &Point) -> Point {
+        Point {
+            x: self.x - _rhs.x,
+            y: self.y - _rhs.y,
+        }
+    }
+
+    pub fn get_directions() -> Vec<Point> {
         vec![
-            Vector::NW,
-            Vector::N,
-            Vector::NE,
-            Vector::E,
-            Vector::SE,
-            Vector::S,
-            Vector::SW,
-            Vector::W,
+            Point::NW,
+            Point::N,
+            Point::NE,
+            Point::E,
+            Point::SE,
+            Point::S,
+            Point::SW,
+            Point::W,
         ]
+    }
+}
+
+impl Add for Point {
+    type Output = Point;
+
+    fn add(self, other: Self) -> Point {
+        Point {
+            x: self.x + other.x,
+            y: self.y + other.y,
+        }
+    }
+}
+
+impl Sub for Point {
+    type Output = Point;
+
+    fn sub(self, other: Self) -> Point {
+        Point {
+            x: self.x - other.x,
+            y: self.y - other.y,
+        }
     }
 }

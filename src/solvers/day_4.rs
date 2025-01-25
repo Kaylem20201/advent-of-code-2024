@@ -2,7 +2,7 @@ use core::panic;
 
 use crate::solvers::tools::grid;
 use grid::Grid;
-use grid::Vector;
+use grid::Point;
 
 struct ParsedInput {
     grid: Grid<char>,
@@ -36,7 +36,7 @@ fn part_1(input: &ParsedInput) -> String {
                 return sum;
             }
             let starting_coord = grid.index_to_coord(index);
-            let res = Vector::get_directions()
+            let res = Point::get_directions()
                 .iter()
                 .fold(0, |inner_sum, direction| {
                     match check_pattern(&grid, &pattern_chars, &starting_coord, direction) {
@@ -69,11 +69,11 @@ fn part_2(input: &ParsedInput) -> String {
             {
                 return sum;
             }
-            let coords_and_dirs: Vec<(Vector, Vector)> = vec![
-                (middle_coord.add(&Vector::NW), Vector::SE),
-                (middle_coord.add(&Vector::NE), Vector::SW),
-                (middle_coord.add(&Vector::SE), Vector::NW),
-                (middle_coord.add(&Vector::SW), Vector::NE),
+            let coords_and_dirs: Vec<(Point, Point)> = vec![
+                (middle_coord.add(&Point::NW), Point::SE),
+                (middle_coord.add(&Point::NE), Point::SW),
+                (middle_coord.add(&Point::SE), Point::NW),
+                (middle_coord.add(&Point::SW), Point::NE),
             ];
             let res =
                 coords_and_dirs.iter().fold(0, |inner_sum, coord_and_dir| {
@@ -124,10 +124,10 @@ fn parse_input(input: &str) -> ParsedInput {
 fn check_pattern(
     grid: &Grid<char>,
     pattern: &Vec<char>,
-    starting_coord: &Vector,
-    direction: &Vector,
+    starting_coord: &Point,
+    direction: &Point,
 ) -> bool {
-    let mut current_coord: Vector = Vector {
+    let mut current_coord: Point = Point {
         x: starting_coord.x,
         y: starting_coord.y,
     };

@@ -2,7 +2,7 @@ use std::collections::HashSet;
 
 use crate::solvers::tools::grid;
 use grid::Grid;
-use grid::Vector;
+use grid::Point;
 
 struct ParsedInput {
     grid: Grid<char>,
@@ -10,8 +10,8 @@ struct ParsedInput {
 
 #[derive(PartialEq, Eq, Hash, Clone, Debug)]
 struct State {
-    position: Vector,
-    direction: Vector,
+    position: Point,
+    direction: Point,
 }
 
 struct PathIterator<'a, T> {
@@ -19,12 +19,12 @@ struct PathIterator<'a, T> {
     grid: &'a Grid<T>,
 }
 
-fn rotate_right(direction: &Vector) -> Vector {
+fn rotate_right(direction: &Point) -> Point {
     match direction {
-        &Vector::N => Vector::E,
-        &Vector::E => Vector::S,
-        &Vector::S => Vector::W,
-        &Vector::W => Vector::N,
+        &Point::N => Point::E,
+        &Point::E => Point::S,
+        &Point::S => Point::W,
+        &Point::W => Point::N,
         _ => panic!("Needs cardinal directions"),
     }
 }
@@ -139,25 +139,25 @@ fn find_start(grid: &Grid<char>) -> State {
             '^' => {
                 return State {
                     position: grid.index_to_coord(index),
-                    direction: Vector::N,
+                    direction: Point::N,
                 };
             }
             '>' => {
                 return State {
                     position: grid.index_to_coord(index),
-                    direction: Vector::E,
+                    direction: Point::E,
                 };
             }
             '<' => {
                 return State {
                     position: grid.index_to_coord(index),
-                    direction: Vector::W,
+                    direction: Point::W,
                 };
             }
             'v' => {
                 return State {
                     position: grid.index_to_coord(index),
-                    direction: Vector::S,
+                    direction: Point::S,
                 };
             }
             _ => continue,

@@ -38,12 +38,12 @@ fn part_1(input: &ParsedInput) -> String {
                 println!("Diff: {:?}", diff);
                 let antinode_1 = seen_antenna.sub(&diff);
                 let antinode_2 = antenna.add(&diff);
-                println!(
+                /* println!(
                     "Antinodes for antennas {:?} and {:?}: {:?}",
                     seen_antenna,
                     antenna,
                     (&antinode_1, &antinode_2)
-                );
+                ); */
                 if input.grid.is_in_bounds(&antinode_1) { antinode_grid.replace_at(&antinode_1, '#'); }
                 if input.grid.is_in_bounds(&antinode_2) { antinode_grid.replace_at(&antinode_2, '#'); }
             });
@@ -60,7 +60,44 @@ fn part_1(input: &ParsedInput) -> String {
 }
 
 fn part_2(input: &ParsedInput) -> String {
-    String::from("Not implemented")
+    let mut antinode_grid : Grid<char> = Grid {
+        elements: input.grid.elements.clone(),
+        length: input.grid.length,
+        height: input.grid.height
+    };
+    input.antennas.iter().for_each(|(_, antenna_set)| {
+        let mut seen_antennas: HashSet<&Point> = HashSet::new();
+        antenna_set.into_iter().for_each(|antenna| {
+            seen_antennas.iter().for_each(|seen_antenna| {
+                antinode_grid.replace_at(&antenna, '#');
+                antinode_grid.replace_at(&seen_antenna, '#');
+                let diff = antenna.sub(seen_antenna);
+                println!("Diff: {:?}", diff);
+                let mut antinode = seen_antenna.sub(&diff);
+                loop {
+                    println!("Antinode: {:?}", antinode);
+                    if !input.grid.is_in_bounds(&antinode) { break; }
+                    antinode_grid.replace_at(&antinode, '#');
+                    antinode = antinode.sub(&diff);
+                }
+                antinode = antenna.add(&diff);
+                loop {
+                    println!("Antinode: {:?}", antinode);
+                    if !input.grid.is_in_bounds(&antinode) { break; }
+                    antinode_grid.replace_at(&antinode, '#');
+                    antinode = antinode.add(&diff);
+                }
+            });
+            seen_antennas.insert(antenna);
+        });
+    });
+
+    antinode_grid.print();
+
+    antinode_grid.elements.into_iter().filter(|element| {
+        *element == '#'
+    }).collect::<Vec<_>>().len().to_string()
+
 }
 
 fn parse_input(input: &str) -> ParsedInput {

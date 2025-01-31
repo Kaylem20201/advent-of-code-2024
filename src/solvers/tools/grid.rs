@@ -40,7 +40,9 @@ impl<T> Grid<T> {
     }
 
     pub fn coord_to_index(&self, coord: &Point) -> Option<usize> {
-        if !self.is_in_bounds(coord) { return None; }
+        if !self.is_in_bounds(coord) {
+            return None;
+        }
 
         let y = coord.y as usize * self.length;
         let x = coord.x as usize;
@@ -49,7 +51,9 @@ impl<T> Grid<T> {
     }
 
     pub fn index_to_coord(&self, index: usize) -> Point {
-        if index >= self.elements.len() { panic!("Out of grid bounds"); }
+        if index >= self.elements.len() {
+            panic!("Out of grid bounds");
+        }
         let y = index / self.length;
         let x = index - (y * self.length);
         return Point {
@@ -57,15 +61,45 @@ impl<T> Grid<T> {
             y: y.try_into().unwrap(),
         };
     }
+
+    pub fn iter(&self) -> GridIterator<T> {
+        GridIterator {
+            grid: &self,
+            curr_index: 0,
+        }
+    }
 }
 
-impl Grid<char> {
+pub struct GridIterator<'a, T> {
+    grid: &'a Grid<T>,
+    curr_index: usize,
+}
+
+impl<'a, T> Iterator for GridIterator<'a, T> {
+    type Item = (Point, &'a T);
+
+    fn next(&mut self) -> Option<(Point, &'a T)> {
+        if self.curr_index >= self.grid.elements.len() {
+            return None;
+        }
+        let ele = &self.grid.elements[self.curr_index];
+        let point = self.grid.index_to_coord(self.curr_index);
+        self.curr_index += 1;
+        return Some((point, ele));
+    }
+}
+
+impl<T: ToString> Grid<T> {
     pub fn print(&self) {
         for i in 0..self.height {
             let start_index = i * self.length;
             let end_index = start_index + self.length;
-            let line = String::from_iter(self.elements[start_index..end_index].into_iter());
-            println!("{}", line);
+            let line = String::from_iter(self.elements[start_index..end_index].into_iter().map(
+                |element| {
+                    return element.to_string();
+                },
+            ));
+            println!("{line}");
         }
     }
 }

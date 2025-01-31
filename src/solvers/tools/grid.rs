@@ -68,6 +68,20 @@ impl<T> Grid<T> {
             curr_index: 0,
         }
     }
+
+    pub fn get_cardinals(&self, start: &Point) -> Vec<Option<(Point, &T)>> {
+        let cardinals =
+            [Point::N, Point::E, Point::S, Point::W].map(|direction| start.add(&direction));
+        cardinals
+            .into_iter()
+            .map(|point| {
+                if let Some(value) = self.get(&point) {
+                    return Some((point, value));
+                }
+                None
+            })
+            .collect()
+    }
 }
 
 pub struct GridIterator<'a, T> {

@@ -61,17 +61,20 @@ fn traverse(grid: &Grid<u32>, start: &Point) -> Option<Vec<Point>> {
     if *start_val == 9 {
         return None;
     }
-    let cardinals = [Point::N, Point::E, Point::S, Point::W].map(|direction| start.add(&direction));
+    let cardinals = grid.get_cardinals(start);
     Some(
         cardinals
             .into_iter()
-            .filter(|point| {
-                if !grid.is_in_bounds(point) || *grid.get(&point).unwrap() != start_val + 1 {
-                    return false;
+            .fold(Vec::new(), |mut points, cardinal| {
+                match cardinal {
+                    Some((point, value)) => {
+                        if *value != start_val+1 { return points; }
+                        points.push(point);
+                        points
+                    },
+                    None => points
                 }
-                true
             })
-            .collect(),
     )
 }
 

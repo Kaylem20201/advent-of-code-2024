@@ -41,7 +41,7 @@ impl Iterator for PathIterator<'_, char> {
                 None => {
                     println!("Reached edge: {:?}", possible_next);
                     return None;
-                },
+                }
                 Some(ch) => char = ch,
             }
             if *char != '#' {
@@ -78,7 +78,10 @@ fn part_1(input: &ParsedInput) -> String {
     let start = find_start(&input.grid);
     let mut visited = HashSet::new();
     visited.insert(start.position.clone());
-    let path = PathIterator { curr: start, grid: &input.grid };
+    let path = PathIterator {
+        curr: start,
+        grid: &input.grid,
+    };
     for coord in path {
         visited.insert(coord.position);
     }
@@ -87,24 +90,32 @@ fn part_1(input: &ParsedInput) -> String {
 
 fn part_2(input: &ParsedInput) -> String {
     let start = find_start(&input.grid);
-    let mut visited : HashSet<State> = HashSet::new();
+    let mut visited: HashSet<State> = HashSet::new();
     visited.insert(start.clone());
-    let path = PathIterator { curr: start.clone(), grid: &input.grid };
+    let path = PathIterator {
+        curr: start.clone(),
+        grid: &input.grid,
+    };
     for coord in path {
         visited.insert(coord);
     }
     let mut new_obstacles = HashSet::new();
     for next_state in visited.into_iter() {
-        if next_state.position == start.position { continue; }
+        if next_state.position == start.position {
+            continue;
+        }
         let mut grid_copy = input.grid.clone();
         grid_copy.replace_at(&next_state.position, '#');
-        let test_path = PathIterator { curr: start.clone(), grid: &grid_copy };
+        let test_path = PathIterator {
+            curr: start.clone(),
+            grid: &grid_copy,
+        };
         let mut test_visited: HashSet<State> = HashSet::new();
         test_visited.insert(start.clone());
         for coord in test_path {
             // println!("test_visited: {:?}", test_visited);
             // println!("Current: {:?}", coord);
-            if test_visited.contains(&coord) { 
+            if test_visited.contains(&coord) {
                 println!("Loop detected. Obstacle: {:?}", next_state.position);
                 new_obstacles.insert(next_state.position.clone());
                 break;

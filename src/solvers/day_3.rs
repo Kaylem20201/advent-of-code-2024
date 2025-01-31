@@ -1,11 +1,10 @@
 use regex::Regex;
 
 struct ParsedInput {
-    mul_pairs: Vec<(u32, u32)>
+    mul_pairs: Vec<(u32, u32)>,
 }
 
 pub fn solve(input: String) -> (String, String) {
-
     let valid_sections = validate_sections(&input);
     let parsed_input = parse_input(&input);
 
@@ -15,7 +14,6 @@ pub fn solve(input: String) -> (String, String) {
     let part2_answer = part_2(valid_sections);
 
     return (part1_answer, part2_answer);
-
 }
 
 fn part_1(input: &ParsedInput) -> String {
@@ -28,22 +26,24 @@ fn part_1(input: &ParsedInput) -> String {
 }
 
 fn part_2(valid_sections: Vec<String>) -> String {
-    let mul_pairs: Vec<(u32, u32)> = valid_sections.iter().flat_map(|sec| {
-        parse_input(&sec).mul_pairs
-    }).collect();
+    let mul_pairs: Vec<(u32, u32)> = valid_sections
+        .iter()
+        .flat_map(|sec| parse_input(&sec).mul_pairs)
+        .collect();
     let input = ParsedInput { mul_pairs };
     part_1(&input)
 }
 
 fn parse_input(input: &str) -> ParsedInput {
-
     let re = Regex::new(r"mul\((?<num_1>\d+),(?<num_2>\d+)\)").unwrap();
-    let mul_pairs: Vec<(u32, u32)> = re.captures_iter(input).map(|capture| {
-        let (_, [num_1, num_2]) = capture.extract();
-        return (num_1.parse::<u32>().unwrap(), num_2.parse::<u32>().unwrap());
-    }).collect();
+    let mul_pairs: Vec<(u32, u32)> = re
+        .captures_iter(input)
+        .map(|capture| {
+            let (_, [num_1, num_2]) = capture.extract();
+            return (num_1.parse::<u32>().unwrap(), num_2.parse::<u32>().unwrap());
+        })
+        .collect();
     return ParsedInput { mul_pairs };
-
 }
 
 fn validate_sections(input: &str) -> Vec<String> {

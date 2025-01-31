@@ -5,6 +5,7 @@ use std::path::Path;
 
 use reqwest::header;
 
+#[rustfmt::skip]
 mod solvers {
     mod tools {
         pub mod grid;

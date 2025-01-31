@@ -69,23 +69,30 @@ fn part_1(input: &ParsedInput) -> String {
 }
 
 fn part_2(input: &ParsedInput) -> String {
-    let ruleset = Ruleset{ rules: &input.rules };
+    let ruleset = Ruleset {
+        rules: &input.rules,
+    };
     let (_good, mut bad) = split_valid_patterns(&input.patterns, &ruleset);
-    bad.iter_mut().fold(0, |res, pattern| {
-        pattern.sort_unstable_by(|a, b| ruleset.ord_cmp(a, b));
-        let middle_num = pattern.get(pattern.len()/2).unwrap();
-        return res+middle_num;
-    }).to_string()
+    bad.iter_mut()
+        .fold(0, |res, pattern| {
+            pattern.sort_unstable_by(|a, b| ruleset.ord_cmp(a, b));
+            let middle_num = pattern.get(pattern.len() / 2).unwrap();
+            return res + middle_num;
+        })
+        .to_string()
 }
 
-fn split_valid_patterns(patterns: &Vec<Vec<u32>>, ruleset: &Ruleset) -> (Vec<Vec<u32>>, Vec<Vec<u32>>) {
+fn split_valid_patterns(
+    patterns: &Vec<Vec<u32>>,
+    ruleset: &Ruleset,
+) -> (Vec<Vec<u32>>, Vec<Vec<u32>>) {
     let mut good: Vec<Vec<u32>> = Vec::new();
     let mut bad: Vec<Vec<u32>> = Vec::new();
 
     for pattern in patterns {
         match check_pattern(pattern, ruleset) {
             true => good.push(pattern.clone()),
-            false => bad.push(pattern.clone())
+            false => bad.push(pattern.clone()),
         }
     }
 

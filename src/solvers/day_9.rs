@@ -53,7 +53,9 @@ fn part_2(input: &ParsedInput) -> String {
     while j != usize::MAX {
         let end = discmap[j];
         if end == usize::MAX {
-            if j == 0 { break; }
+            if j == 0 {
+                break;
+            }
             j -= 1;
             continue;
         }
@@ -81,16 +83,15 @@ fn part_2(input: &ParsedInput) -> String {
             }
             break;
         }
-        if (i >= block_start) { 
+        if (i >= block_start) {
             println!("Could not move block {:?}", discmap[block_start]);
-            if block_start == 0 { break; }
-            j = block_start-1;
+            if block_start == 0 {
+                break;
+            }
+            j = block_start - 1;
             continue;
         }
-        println!(
-            "Swapping blocks at {:?} and {:?}",
-            i, j
-        );
+        println!("Swapping blocks at {:?} and {:?}", i, j);
         let check = discmap[j];
         discmap[i] = check;
         discmap[j] = usize::MAX;
@@ -108,7 +109,9 @@ fn part_2(input: &ParsedInput) -> String {
         .into_iter()
         .enumerate()
         .fold(0, |sum, (i, ele)| {
-            if ele == usize::MAX { return sum; }
+            if ele == usize::MAX {
+                return sum;
+            }
             sum + (ele * i)
         })
         .to_string()
@@ -116,13 +119,17 @@ fn part_2(input: &ParsedInput) -> String {
 
 fn find_end_of_block(discmap: &Vec<usize>, start_index: usize) -> usize {
     //returns index after end of block
-    if start_index >= discmap.len()-1 { return discmap.len() }
+    if start_index >= discmap.len() - 1 {
+        return discmap.len();
+    }
     let check = discmap.get(start_index).unwrap();
     let mut i = start_index;
     loop {
         if discmap[i] == *check {
             i += 1;
-            if i >= discmap.len() { return discmap.len() }
+            if i >= discmap.len() {
+                return discmap.len();
+            }
             continue;
         }
         return i;
@@ -131,13 +138,17 @@ fn find_end_of_block(discmap: &Vec<usize>, start_index: usize) -> usize {
 
 fn find_start_of_block(discmap: &Vec<usize>, start_index: usize) -> usize {
     //returns index AT BEGINNING (INCLUSIVE) of block
-    if start_index == 0 { return 0; }
+    if start_index == 0 {
+        return 0;
+    }
     let check = discmap.get(start_index).unwrap();
     let mut i = start_index;
     loop {
         if discmap[i] == *check {
             i -= 1;
-            if i == 0 { return 0; }
+            if i == 0 {
+                return 0;
+            }
             continue;
         }
         return i + 1;

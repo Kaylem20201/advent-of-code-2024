@@ -25,10 +25,10 @@ pub fn solve(input: String) -> (String, String) {
 }
 
 fn part_1(input: &ParsedInput) -> String {
-    let mut antinode_grid : Grid<char> = Grid {
+    let mut antinode_grid: Grid<char> = Grid {
         elements: input.grid.elements.clone(),
         length: input.grid.length,
-        height: input.grid.height
+        height: input.grid.height,
     };
     input.antennas.iter().for_each(|(_, antenna_set)| {
         let mut seen_antennas: HashSet<&Point> = HashSet::new();
@@ -44,8 +44,12 @@ fn part_1(input: &ParsedInput) -> String {
                     antenna,
                     (&antinode_1, &antinode_2)
                 ); */
-                if input.grid.is_in_bounds(&antinode_1) { antinode_grid.replace_at(&antinode_1, '#'); }
-                if input.grid.is_in_bounds(&antinode_2) { antinode_grid.replace_at(&antinode_2, '#'); }
+                if input.grid.is_in_bounds(&antinode_1) {
+                    antinode_grid.replace_at(&antinode_1, '#');
+                }
+                if input.grid.is_in_bounds(&antinode_2) {
+                    antinode_grid.replace_at(&antinode_2, '#');
+                }
             });
             seen_antennas.insert(antenna);
         });
@@ -53,17 +57,20 @@ fn part_1(input: &ParsedInput) -> String {
 
     antinode_grid.print();
 
-    antinode_grid.elements.into_iter().filter(|element| {
-        *element == '#'
-    }).collect::<Vec<_>>().len().to_string()
-
+    antinode_grid
+        .elements
+        .into_iter()
+        .filter(|element| *element == '#')
+        .collect::<Vec<_>>()
+        .len()
+        .to_string()
 }
 
 fn part_2(input: &ParsedInput) -> String {
-    let mut antinode_grid : Grid<char> = Grid {
+    let mut antinode_grid: Grid<char> = Grid {
         elements: input.grid.elements.clone(),
         length: input.grid.length,
-        height: input.grid.height
+        height: input.grid.height,
     };
     input.antennas.iter().for_each(|(_, antenna_set)| {
         let mut seen_antennas: HashSet<&Point> = HashSet::new();
@@ -76,14 +83,18 @@ fn part_2(input: &ParsedInput) -> String {
                 let mut antinode = seen_antenna.sub(&diff);
                 loop {
                     println!("Antinode: {:?}", antinode);
-                    if !input.grid.is_in_bounds(&antinode) { break; }
+                    if !input.grid.is_in_bounds(&antinode) {
+                        break;
+                    }
                     antinode_grid.replace_at(&antinode, '#');
                     antinode = antinode.sub(&diff);
                 }
                 antinode = antenna.add(&diff);
                 loop {
                     println!("Antinode: {:?}", antinode);
-                    if !input.grid.is_in_bounds(&antinode) { break; }
+                    if !input.grid.is_in_bounds(&antinode) {
+                        break;
+                    }
                     antinode_grid.replace_at(&antinode, '#');
                     antinode = antinode.add(&diff);
                 }
@@ -94,10 +105,13 @@ fn part_2(input: &ParsedInput) -> String {
 
     antinode_grid.print();
 
-    antinode_grid.elements.into_iter().filter(|element| {
-        *element == '#'
-    }).collect::<Vec<_>>().len().to_string()
-
+    antinode_grid
+        .elements
+        .into_iter()
+        .filter(|element| *element == '#')
+        .collect::<Vec<_>>()
+        .len()
+        .to_string()
 }
 
 fn parse_input(input: &str) -> ParsedInput {
@@ -121,7 +135,9 @@ fn parse_input(input: &str) -> ParsedInput {
 fn parse_antennas(grid: &Grid<char>) -> HashMap<char, HashSet<Point>> {
     let mut antennas: HashMap<char, HashSet<Point>> = HashMap::new();
     for (i, char) in grid.elements.iter().enumerate() {
-        if *char == '.' {continue}
+        if *char == '.' {
+            continue;
+        }
         let antenna = grid.index_to_coord(i);
         if let Some(set) = antennas.get_mut(char) {
             set.insert(antenna);

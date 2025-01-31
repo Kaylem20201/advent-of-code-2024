@@ -84,6 +84,47 @@ impl<T> Grid<T> {
     }
 }
 
+impl From<&str> for Grid<char> {
+    fn from(raw_str: &str) -> Self {
+        let lines = raw_str.lines().collect::<Vec<&str>>();
+        let height = lines.len();
+        let length = lines.get(0).unwrap().len();
+        let elements: Vec<char> = lines
+            .into_iter()
+            .map(|line| line.chars().collect::<Vec<_>>())
+            .flatten()
+            .collect();
+
+        Grid {
+            elements,
+            height,
+            length,
+        }
+    }
+}
+
+impl From<&str> for Grid<u8> {
+    fn from(raw_str: &str) -> Self {
+        let lines = raw_str.lines().collect::<Vec<&str>>();
+        let height = lines.len();
+        let length = lines.get(0).unwrap().len();
+        let elements: Vec<u8> = lines
+            .into_iter()
+            .map(|line| {
+                line.chars()
+                    .map(|c| char::to_digit(c, 10).expect("Element not a digit") as u8)
+                    .collect::<Vec<_>>()
+            })
+            .flatten().collect();
+
+        Grid {
+            elements,
+            height,
+            length,
+        }
+    }
+}
+
 pub struct GridIterator<'a, T> {
     grid: &'a Grid<T>,
     curr_index: usize,

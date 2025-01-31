@@ -76,7 +76,36 @@ fn traverse(grid: &Grid<u32>, start: &Point) -> Option<Vec<Point>> {
 }
 
 fn part_2(input: &ParsedInput) -> String {
-    String::from("Not yet implemented")
+    let mut sum = 0;
+
+    for (point, digit) in input.grid.iter() {
+        if *digit != 0 {
+            continue;
+        }
+        let mut points: Vec<Point> = vec![point];
+
+        loop {
+            // println!("{:?}", points);
+            let mut new_points: Vec<Vec<Point>> = Vec::new();
+            for point in points.clone().into_iter() {
+                match traverse(&input.grid, &point) {
+                    Some(new_paths) => {
+                        new_points.push(new_paths);
+                        continue;
+                    }
+                    None => {
+                        sum += 1;
+                    }
+                }
+            }
+            points = new_points.concat();
+            if points.is_empty() {
+                break;
+            }
+        }
+    }
+
+    sum.to_string()
 }
 
 fn parse_input(input: &str) -> ParsedInput {

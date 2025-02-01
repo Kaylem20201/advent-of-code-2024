@@ -8,7 +8,7 @@ pub struct Grid<T> {
     pub length: usize,
 }
 
-#[derive(Debug, PartialEq, Eq, Hash, Clone)]
+#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
 pub struct Point {
     pub x: isize,
     pub y: isize,
@@ -69,18 +69,14 @@ impl<T> Grid<T> {
         }
     }
 
-    pub fn get_cardinals(&self, start: &Point) -> Vec<Option<(Point, &T)>> {
-        let cardinals =
-            [Point::N, Point::E, Point::S, Point::W].map(|direction| start.add(&direction));
-        cardinals
-            .into_iter()
-            .map(|point| {
-                if let Some(value) = self.get(&point) {
-                    return Some((point, value));
-                }
-                None
-            })
-            .collect()
+    pub fn get_cardinals(&self, start: &Point) -> [Option<(Point, &T)>; 4] {
+        [Point::N, Point::E, Point::S, Point::W].map(|direction| start.add(&direction))
+        .map(|point| {
+            if let Some(value) = self.get(&point) {
+                return Some((point, value));
+            }
+            None
+        })
     }
 }
 

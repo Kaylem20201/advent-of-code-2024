@@ -4,12 +4,6 @@ struct ParsedInput {
     stones: Vec<usize>,
 }
 
-#[derive(Eq, Hash, PartialEq, Clone)]
-struct Stone {
-    value: usize,
-    blinks: u8,
-}
-
 pub fn solve(input: String) -> (String, String) {
     let parsed_input = parse_input(&input);
 

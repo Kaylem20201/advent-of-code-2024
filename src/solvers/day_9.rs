@@ -2,11 +2,6 @@ struct ParsedInput {
     discmap: Vec<usize>,
 }
 
-struct Block {
-    is_free: bool,
-    size: u8,
-}
-
 pub fn solve(input: String) -> (String, String) {
     let parsed_input = parse_input(&input);
 
@@ -83,7 +78,7 @@ fn part_2(input: &ParsedInput) -> String {
             }
             break;
         }
-        if (i >= block_start) {
+        if i >= block_start {
             println!("Could not move block {:?}", discmap[block_start]);
             if block_start == 0 {
                 break;

@@ -1,5 +1,5 @@
-const A_COST: u32 = 3;
-const B_COST: u32 = 1;
+const A_TOKENS: u32 = 3;
+const B_TOKENS: u32 = 1;
 
 struct ParsedInput {
     problems: Vec<Problem>,
@@ -25,7 +25,32 @@ pub fn solve(input: String) -> (String, String) {
 }
 
 fn part_1(input: &ParsedInput) -> String {
-    String::from("Not yet implemented")
+    let mut final_tokens = 0;
+
+    for Problem { a, b, prize } in input.problems.iter() {
+        let mut min_cost = (100 * A_TOKENS) + (100 * B_TOKENS);
+        for b_presses in 0..=100 {
+            for a_presses in 0..=100 {
+                let cost = (a_presses * A_TOKENS) + (b_presses * B_TOKENS);
+                let [x_pos, y_pos] = [
+                    (a_presses * a.0) + (b_presses * b.0),
+                    (a_presses * a.1) + (b_presses * b.1),
+                ];
+                if x_pos == prize.0 && y_pos == prize.1 {
+                    min_cost = u32::min(min_cost, cost);
+                    continue;
+                }
+            }
+        }
+        if min_cost == (100 * A_TOKENS) + (100 * B_TOKENS) {
+            println!("No solution for {:?}", (a, b, prize));
+            continue;
+        }
+        println!("Cost for {:?}: {:?}", (a, b, prize), min_cost);
+        final_tokens += min_cost;
+    }
+
+    final_tokens.to_string()
 }
 
 fn part_2(input: &ParsedInput) -> String {

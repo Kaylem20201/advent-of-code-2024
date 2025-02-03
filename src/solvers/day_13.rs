@@ -1,5 +1,6 @@
-const A_TOKENS: u32 = 3;
-const B_TOKENS: u32 = 1;
+const A_TOKENS: usize = 3;
+const B_TOKENS: usize = 1;
+const CONVERT: usize = 10000000000000;
 
 struct ParsedInput {
     problems: Vec<Problem>,
@@ -7,9 +8,9 @@ struct ParsedInput {
 
 #[derive(Debug)]
 struct Problem {
-    a: (u32, u32),
-    b: (u32, u32),
-    prize: (u32, u32),
+    a: (usize, usize),
+    b: (usize, usize),
+    prize: (usize, usize),
 }
 
 pub fn solve(input: String) -> (String, String) {
@@ -37,16 +38,16 @@ fn part_1(input: &ParsedInput) -> String {
                     (a_presses * a.1) + (b_presses * b.1),
                 ];
                 if x_pos == prize.0 && y_pos == prize.1 {
-                    min_cost = u32::min(min_cost, cost);
+                    min_cost = usize::min(min_cost, cost);
                     continue;
                 }
             }
         }
         if min_cost == (100 * A_TOKENS) + (100 * B_TOKENS) {
-            println!("No solution for {:?}", (a, b, prize));
+            // println!("No solution for {:?}", (a, b, prize));
             continue;
         }
-        println!("Cost for {:?}: {:?}", (a, b, prize), min_cost);
+        // println!("Cost for {:?}: {:?}", (a, b, prize), min_cost);
         final_tokens += min_cost;
     }
 
@@ -54,7 +55,63 @@ fn part_1(input: &ParsedInput) -> String {
 }
 
 fn part_2(input: &ParsedInput) -> String {
-    String::from("Not yet implemented")
+    fn solve_buttons(problem: &Problem) -> Option<(usize, usize)> {
+        //System of linear equations means that there are 0 solutions, 1 solutions, or infininitely
+        //  many solutions
+        //Infinites in this case would need negative values
+        //Problem is constrained so that infinite is not a concern
+        // (a.x * x) + (b.x * b) = p.x
+        // (a.y * y) + (b.y * y) = p.y
+        // AX = C
+        // | a.x b.x || a | = | p.x |
+        // | a.y b.y || b | = | p.y |
+        //Cramer's rule. x = Det(x)/Det(A), y = Det(y)/Det(A)
+        //Det(A) = (a_x * b_y) - (b_x * a_y)
+        //a = ((p.x * b.y) - (p.y * b.x)) / Det(A)
+        //b = ((a.x * p.y) - (p.x * a.y)) / Det(A)
+
+        let ((a_x, a_y), (b_x, b_y), (p_x, p_y)) = (
+            (problem.a.0 as isize, problem.a.1 as isize),
+            (problem.b.0 as isize, problem.b.1 as isize),
+            (problem.prize.0 as isize, problem.prize.1 as isize),
+        );
+        let det = (a_x * b_y) - (b_x * a_y);
+        let a_num = (p_x * b_y) - (p_y * b_x);
+        let b_num = (a_x * p_y) - (p_x * a_y);
+
+        if (a_num % det != 0) || (b_num % det != 0) {
+            println!("No solution for {:?}", problem);
+            dbg!(det, a_num, b_num);
+            return None;
+        }
+
+        let a_raw = a_num / det;
+        let b_raw = b_num / det;
+
+        if a_raw < 0 || b_raw < 0 {
+            println!("No solution for {:?}", problem);
+            dbg!(det, a_raw, b_raw);
+            return None;
+        }
+
+        let (a, b) = (a_raw as usize, b_raw as usize);
+        Some((a, b))
+    }
+
+    let mut final_tokens = 0;
+
+    for raw_problem in &input.problems {
+        let problem: Problem = Problem {
+            prize: (raw_problem.prize.0 + CONVERT, raw_problem.prize.1 + CONVERT),
+            ..*raw_problem
+        };
+        if let Some((a, b)) = solve_buttons(&problem) {
+            let cost = 3 * a + b;
+            final_tokens += cost;
+        }
+    }
+
+    final_tokens.to_string()
 }
 
 fn parse_input(input: &str) -> ParsedInput {

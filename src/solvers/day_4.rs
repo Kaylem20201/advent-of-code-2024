@@ -64,7 +64,7 @@ fn part_2(input: &ParsedInput) -> String {
             let middle_coord = grid.index_to_coord(index);
             if middle_coord.x < 1
                 || middle_coord.y < 1
-                || middle_coord.x >= grid.length.try_into().unwrap()
+                || middle_coord.x >= grid.width.try_into().unwrap()
                 || middle_coord.y >= grid.height.try_into().unwrap()
             {
                 return sum;
@@ -116,7 +116,7 @@ fn parse_input(input: &str) -> ParsedInput {
         grid: Grid {
             elements: chars,
             height,
-            length,
+            width: length,
         },
     }
 }
@@ -134,7 +134,7 @@ fn check_pattern(
     for check_char in pattern {
         if current_coord.x < 0
             || current_coord.y < 0
-            || current_coord.x >= grid.length.try_into().unwrap()
+            || current_coord.x >= grid.width.try_into().unwrap()
             || current_coord.y >= grid.height.try_into().unwrap()
         {
             return false;

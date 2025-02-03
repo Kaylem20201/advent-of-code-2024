@@ -127,7 +127,7 @@ fn parse_input(input: &str) -> ParsedInput {
     let grid = Grid {
         elements,
         height,
-        length,
+        width: length,
     };
 
     return ParsedInput { grid };

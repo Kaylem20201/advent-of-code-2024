@@ -27,7 +27,7 @@ pub fn solve(input: String) -> (String, String) {
 fn part_1(input: &ParsedInput) -> String {
     let mut antinode_grid: Grid<char> = Grid {
         elements: input.grid.elements.clone(),
-        length: input.grid.length,
+        width: input.grid.width,
         height: input.grid.height,
     };
     input.antennas.iter().for_each(|(_, antenna_set)| {
@@ -69,7 +69,7 @@ fn part_1(input: &ParsedInput) -> String {
 fn part_2(input: &ParsedInput) -> String {
     let mut antinode_grid: Grid<char> = Grid {
         elements: input.grid.elements.clone(),
-        length: input.grid.length,
+        width: input.grid.width,
         height: input.grid.height,
     };
     input.antennas.iter().for_each(|(_, antenna_set)| {
@@ -126,7 +126,7 @@ fn parse_input(input: &str) -> ParsedInput {
     let grid = Grid {
         elements,
         height,
-        length,
+        width: length,
     };
     let antennas = parse_antennas(&grid);
     return ParsedInput { grid, antennas };

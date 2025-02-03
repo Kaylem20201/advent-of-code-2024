@@ -139,7 +139,7 @@ fn parse_input(input: &str) -> ParsedInput {
         grid: Grid {
             elements,
             height,
-            length,
+            width: length,
         },
     };
 }

@@ -5,7 +5,7 @@ use std::usize;
 pub struct Grid<T> {
     pub elements: Vec<T>,
     pub height: usize,
-    pub length: usize,
+    pub width: usize,
 }
 
 #[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
@@ -35,7 +35,7 @@ impl<T> Grid<T> {
     pub fn is_in_bounds(&self, coord: &Point) -> bool {
         coord.x >= 0
             && coord.y >= 0
-            && coord.x < self.length.try_into().unwrap()
+            && coord.x < self.width.try_into().unwrap()
             && coord.y < self.height.try_into().unwrap()
     }
 
@@ -44,7 +44,7 @@ impl<T> Grid<T> {
             return None;
         }
 
-        let y = coord.y as usize * self.length;
+        let y = coord.y as usize * self.width;
         let x = coord.x as usize;
 
         Some(x + y)
@@ -54,8 +54,8 @@ impl<T> Grid<T> {
         if index >= self.elements.len() {
             panic!("Out of grid bounds");
         }
-        let y = index / self.length;
-        let x = index - (y * self.length);
+        let y = index / self.width;
+        let x = index - (y * self.width);
         return Point {
             x: x.try_into().unwrap(),
             y: y.try_into().unwrap(),
@@ -84,7 +84,7 @@ impl From<&str> for Grid<char> {
     fn from(raw_str: &str) -> Self {
         let lines = raw_str.lines().collect::<Vec<&str>>();
         let height = lines.len();
-        let length = lines.get(0).unwrap().len();
+        let width = lines.get(0).unwrap().len();
         let elements: Vec<char> = lines
             .into_iter()
             .map(|line| line.chars().collect::<Vec<_>>())
@@ -94,7 +94,7 @@ impl From<&str> for Grid<char> {
         Grid {
             elements,
             height,
-            length,
+            width,
         }
     }
 }
@@ -103,7 +103,7 @@ impl From<&str> for Grid<u8> {
     fn from(raw_str: &str) -> Self {
         let lines = raw_str.lines().collect::<Vec<&str>>();
         let height = lines.len();
-        let length = lines.get(0).unwrap().len();
+        let width = lines.get(0).unwrap().len();
         let elements: Vec<u8> = lines
             .into_iter()
             .map(|line| {
@@ -116,7 +116,7 @@ impl From<&str> for Grid<u8> {
         Grid {
             elements,
             height,
-            length,
+            width,
         }
     }
 }
@@ -143,8 +143,8 @@ impl<'a, T> Iterator for GridIterator<'a, T> {
 impl<T: ToString> Grid<T> {
     pub fn print(&self) {
         for i in 0..self.height {
-            let start_index = i * self.length;
-            let end_index = start_index + self.length;
+            let start_index = i * self.width;
+            let end_index = start_index + self.width;
             let line = String::from_iter(self.elements[start_index..end_index].into_iter().map(
                 |element| {
                     return element.to_string();

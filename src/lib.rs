@@ -25,7 +25,7 @@ mod solvers {
     mod day_12;
     mod day_13;
     mod day_14;
-    // mod day_15;
+    mod day_15;
     // mod day_16;
     // mod day_17;
     // mod day_18;
@@ -53,7 +53,7 @@ mod solvers {
             12 => day_12::solve(input),
             13 => day_13::solve(input),
             14 => day_14::solve(input),
-            // 15 => day_15::solve(input),
+            15 => day_15::solve(input),
             // 16 => day_16::solve(input),
             // 17 => day_17::solve(input),
             // 18 => day_18::solve(input),

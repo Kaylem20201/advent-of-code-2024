@@ -70,13 +70,14 @@ impl<T> Grid<T> {
     }
 
     pub fn get_cardinals(&self, start: &Point) -> [Option<(Point, &T)>; 4] {
-        [Point::N, Point::E, Point::S, Point::W].map(|direction| start.add(&direction))
-        .map(|point| {
-            if let Some(value) = self.get(&point) {
-                return Some((point, value));
-            }
-            None
-        })
+        [Point::N, Point::E, Point::S, Point::W]
+            .map(|direction| start.add(&direction))
+            .map(|point| {
+                if let Some(value) = self.get(&point) {
+                    return Some((point, value));
+                }
+                None
+            })
     }
 }
 
@@ -111,7 +112,8 @@ impl From<&str> for Grid<u8> {
                     .map(|c| char::to_digit(c, 10).expect("Element not a digit") as u8)
                     .collect::<Vec<_>>()
             })
-            .flatten().collect();
+            .flatten()
+            .collect();
 
         Grid {
             elements,
@@ -137,6 +139,27 @@ impl<'a, T> Iterator for GridIterator<'a, T> {
         let point = self.grid.index_to_coord(self.curr_index);
         self.curr_index += 1;
         return Some((point, ele));
+    }
+}
+
+impl<T: PartialEq + std::fmt::Debug> Grid<T> {
+    pub fn find_first(&self, matcher: &T) -> Option<Point> {
+        if let Some((index, _)) = self
+            .elements
+            .iter()
+            .enumerate()
+            .find(|(_, ele)| *ele == matcher)
+        {
+            return Some(self.index_to_coord(index));
+        }
+        None
+    }
+
+    pub fn find_all(&self, matcher: &T) -> Option<Vec<Point>> {
+        let points = self.elements.iter().enumerate().filter_map(|(index, ele)| {
+            (ele == matcher).then(|| self.index_to_coord(index))
+        }).collect::<Vec<Point>>();
+        (!points.is_empty()).then_some(points)
     }
 }
 
